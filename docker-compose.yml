@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  analyzer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: air_quality_analyzer
+    environment:
+      - DATA_PATH=data
+      - OUTPUT_PATH=output
+      - TEST_SIZE=0.2
+      - RANDOM_STATE=42
+    volumes:
+      - ./data:/app/data
+      - ./output:/app/output
+    command: python run.py
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import os, sys; sys.exit(0 if os.path.exists(\"/app/run.py\") else 1)'"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
